@@ -1,0 +1,92 @@
+<html>
+<head>
+	<title>Timer</title>
+	<style>button {font-size: 14pt; padding:12px; width:25%;}</style>
+</head>
+<body>
+	<div class="container" style="text-align:center; margin: 10px;">
+	
+	<div id="timer" style="font-size:3em; background-color: lightblue;"></div>
+	<div id="buttons"></div>
+	</div>
+
+	<script>
+		// HELPER METHODS
+		Date.prototype.formattedTime = function() {
+			return this.toTimeString().split(" ")[0];
+		}
+
+		// capitalize button names
+		String.prototype.capitalize = function() {
+			return this.split(' ').map(
+				v => v.charAt(0).toUpperCase()
+				+ v.slice(1) 
+			).join(' ')
+		}
+
+
+		function Timer(start, tick) {
+			var self = this;
+			this.date = new Date(start);
+			this.startTime = new Date(start);
+			this.timer = null;
+			this.tick = tick || 1;
+		}
+
+		var t = Timer.prototype;
+
+		t.getTime = function() {
+			return this.date.formattedTime()
+		}
+
+
+		t.update = function() {			
+			// update display element
+			document.getElementById('timer').innerHTML=this.getTime()
+			this.date.setSeconds( this.date.getSeconds() + this.tick);
+		}
+
+		t.play = function() {
+			this.timer = setInterval(
+				this.update.bind(this), 
+				1000)
+		}
+
+		t.stop = function() {
+			clearInterval(this.timer);
+			this.timer = null;
+		}
+
+		t.reset = function() {
+			this.date = new Date(this.startTime);
+			this.update();
+			this.stop();			
+		}
+		t.start = function() {
+			this.reset(); this.play();
+		}
+
+
+		// setting up context specific timer
+		var TimerZero =  new Timer('1/1/1976 00:00:00', 1)
+
+		TimerZero.start();
+
+		// mapping buttons to functions
+		['start','play','stop','reset'].map( 
+			v => {
+
+				var el = document.getElementById('buttons');
+
+				var node = document.createElement('BUTTON');
+
+				node.innerHTML = v.capitalize();
+
+				node.addEventListener('click',TimerZero[(v)].bind(TimerZero));
+
+				el.appendChild(node);
+			});
+
+	</script>
+</body>
+</html>
