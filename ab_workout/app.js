@@ -9,27 +9,24 @@ var Glyphicon = React.createClass({
 
 var Main = React.createClass({
 	getDefaultProps: function() {
+		var excercises = Excercises.splice(0,5);
+		var timeLeft = excercises
+			   .map( x => x.time )
+			   .reduce( (x,y) => x+y, 0);
 		return {
-			excercises:[
-			{
-				name:'ab crunch',
-				img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ2pQ-9NDT97iPdhMVxk9d_HdjVhlgqGdJM3hzTR7A9NN0CrG1JkWe013IX',
-				gif:'http://i.giphy.com/45wEmqKPFvz7a.gif',
-				time: 60,
-
-			},
-			{
-				name:'plank',
-				img: 'http://www.sterling-wellness.com/wp-content/uploads/2016/02/power-of-the-plank.jpg',
-				gif: 'http://i.giphy.com/9jgZ23cJ8WKA0.gif',
-				time: 30,
-			},
-			{
-				name:'break',
-				time: 30,
-			}
-			]
+			excercises: excercises,
+			timeLeft: timeLeft,
 		}
+	},
+
+	resetExcercises: function() {
+		alert('workouts reset')
+		this.setState({
+			currentId: 0,
+			current: this.props.excercises[0],
+			next: this.props.excercises[1],
+			showWorkouts: true,
+		});
 	},
 
 	getInitialState: function() {
@@ -37,7 +34,7 @@ var Main = React.createClass({
 			currentId: 0,
 			current: this.props.excercises[0],
 			next: this.props.excercises[1],
-			showWorkouts: true,
+			showWorkouts: true,			
 		}
 
 	},
@@ -50,17 +47,19 @@ var Main = React.createClass({
 
 		console.log('IDX',idx)
 
-		if (idx>=this.props.excercises.length) {
+		if (idx>this.props.excercises.length) {
 			this.setState({ showWorkouts: false});
 			alert('dont show!')
 		}
-
 		else {
+			var next = this.props.excercises[idx+1] || null;
+			var current = this.props.excercises[idx] || null;
+			// console.log('my excercise',next)
 			this.setState(
 			{
 				currentId: this.state.currentId+1,
 				current:this.props.excercises[idx],
-				next:this.props.excercises[idx+1],
+				next:next,
 			})
 		}
 
@@ -68,6 +67,7 @@ var Main = React.createClass({
 		
 	},
 	render: function() {
+		console.log('Time Left', this.props.timeLeft)
 		
 		console.log(this.props.excercises[this.state.currentId])
 		return (
@@ -78,21 +78,39 @@ var Main = React.createClass({
 				Ab Workout <Glyphicon name="heart"/> 
 				</h1>
 			</div>
-		{ this.state.showWorkouts ?
+		{ this.state.showWorkouts 
+			&& this.state.current ?
 		<Workout 
 			current={this.state.current} 
 			next={this.state.next} 
-			onNextWorkout={this.onNextWorkout}/>
+			onNextWorkout={this.onNextWorkout}
+			timeLeft={this.props.timeLeft}/>
 		
-		: '' }
+		: <ResetWorkouts reset={this.resetExcercises} /> }
 
 		</div>
 		);
 	}
 });
 
+var ResetWorkouts = React.createClass({
+	render: function() {
+		return (
+			<div>
+			Congrats! You have completed the ab challenge!
+			  <button className="btn btn-primary"
+			     onClick={this.props.reset}>
+			  Reset my Workout
+			  </button>
+			</div>
+			);
+	}
+
+})
+
 
 var Workout = React.createClass({
+
 	getInitialState: function() {
 		return { showImage: false }
 	},
@@ -103,24 +121,27 @@ var Workout = React.createClass({
 		console.log(this.props.current, this.props.next);
 		return (
 		<div>
-			<p>{this.props.current.name}
-				<button 
+			<div className="row">
+				<button
+				  className="btn-row btn btn-primary" 
 				  onClick={this.toggleImage}>
-				  Show Picture</button>
-			</p>
+				  Show Picture for {this.props.current.name}
+				 </button>
+			
 			{ this.state.showImage ? 
 				<ExcerciseDemo 
 				  ex={this.props.current} />
 				: ''
 			}
+			</div>
 
 			<Timer 
 			  time={this.props.current.time}
-			  current = {this.props.current.name}
-			  next = {this.props.next.name}
+			  current = {this.props.current}
+			  next = {this.props.next}
+			  timeLeft = {this.props.timeLeft}
 			  onNextWorkout={this.props.onNextWorkout}/>
 			
-			<p> {this.props.next ? this.props.next.name: 'None'} </p>
 			<p>SHUFFLE</p>
 			<p>EQUIPMENT</p>
 		</div>
@@ -130,8 +151,7 @@ var Workout = React.createClass({
 
 
 var ExcerciseDemo = React.createClass({
-	render: function() {
-		console.log(this.props.ex)
+	render: function() {		
 		
 		var gif = this.props.ex.gif ? <img 
 			  className="img-responsive"
@@ -158,6 +178,7 @@ var Timer = React.createClass({
 		return {
 			time: parseInt(this.props.time) || 60,
 			tick: 1,
+			timeLeft: parseInt(this.props.timeLeft),
 			timer: null,
 			finished: false,
 		}
@@ -170,8 +191,6 @@ var Timer = React.createClass({
 		if (!this.state.timer)
 		this.setState({
 			timer:setInterval(this.update, 1000)});
-
-
 	},
 	stop: function() {
 		// console.log('stopped');
@@ -208,7 +227,12 @@ var Timer = React.createClass({
 		// hacky way to solve need t finish
 		if (this.state.timer) {
 			var now = this.state.time-this.state.tick;
-			this.setState({time: (now > 0) ? now : 0})
+			var timeLeft = this.state.timeLeft-this.state.tick;
+			this.setState(
+				{
+					time: (now > 0) ? now : 0,
+					timeLeft: (timeLeft > 0) ? timeLeft: 0,
+				});
 			this.handleFinished();
 			this.handleWarnings(this.state.time);
 			
@@ -222,7 +246,10 @@ var Timer = React.createClass({
 		this.stop();
 	},
 	reset: function() {
-		this.setState({time:this.props.time})
+		this.setState({
+			time:this.props.time,
+			timeLeft:this.props.timeLeft
+		})
 	},
 	setToZero: function() {
 		this.setState({time:0});
@@ -232,41 +259,60 @@ var Timer = React.createClass({
 		var resetBtn = 
 		  (this.state.timer === null) ? 
 		  <button 
-		    className='btn btn-secondary btn-lg'
+		    className='btn btn-danger btn-xlarge'
 		    onClick={this.reset} >
 		    Reset
-		  </button>: '';
+		  </button>: null;
+
+		 var currentDiv = <div className="col-xs-6 strong">{
+		 	   (this.props.current) ? 
+			 	"now: "+this.props.current.name 
+			 	: "Nothing" }</div>
+
+		 var nextDiv = <div className="col-xs-6 strong">{
+		 	    (this.props.next) ? 
+			 	"next: "+this.props.next.name
+			 	: "Nothing" }</div>
 
 		return (
 
 		<div className="row">
-			<div className="timer col-md-8 col-md-offset-2"
+			<h2>Time Left: {this.state.timeLeft}</h2>
+			<div className="timer col-md-12 col-sm-12 col-lg-12"
 			 ref="timer">
-				 <h4>now: {this.props.current} </h4>
+			    
+			    <div className="row">			 
+					 { currentDiv }
+					 { nextDiv }
+				</div>
 			
 				<h1 className="timer-text"
 				ref='timerText'>
 				{this.state.time}</h1>
 				
 			
-			
-			<button className="btn btn-primary btn-lg"
-			  onClick={ this.state.timer ? 
-			  	this.stop : this.start}> 
-			  
+			<div className="btn-group" role="group">
+				<button className="btn btn-primary btn-xlarge"
+				  onClick={ this.state.timer ? 
+				  	this.stop : this.start}> 
+				  
 
-			  { this.state.timer ? 		  	
-			  	<Glyphicon name="pause" />
-			  	: 
-			  	<Glyphicon name="play" />
-			  }
-			  </button>
+				  { this.state.timer ? 		  	
+				  	<Glyphicon name="pause" />
+				  	: 
+				  	<Glyphicon name="play" />
+				  }
+				  </button>
+			  </div>
 
 			 { resetBtn }
-			 <h4>next: {this.props.next}</h4>
+
+			 
 			 </div>
 
-			 <button onClick={this.setToZero}>End the current Time</button>
+
+			 <button className="btn-row btn btn-primary"
+			 onClick={this.setToZero}>End the current Time</button>
 
 		</div>
 		);
