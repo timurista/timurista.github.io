@@ -7,43 +7,92 @@ var Glyphicon = React.createClass({
 	}
 });
 
-var Main = React.createClass({
-	getDefaultProps: function() {
-		var excercises = Excercises.splice(0,5);
-		var timeLeft = excercises
-			   .map( x => x.time )
-			   .reduce( (x,y) => x+y, 0);
-		return {
-			excercises: excercises,
-			timeLeft: timeLeft,
+var WorkoutShuffler = React.createClass({
+	handleShuffle: function() {
+		var c = confirm('Start a new workout?');
+
+		if (c) {
+			alert('Workout shuffled and restarted');			
 		}
 	},
+	render: function() {
+		return (
+			<button 
+			onClick={this.handleShuffle}
+			className="btn btn-warning btn-xlarge">
+				<Glyphicon name="plus-sign" /> 
+			</button>
+		)
+	}
 
-	resetExcercises: function() {
-		alert('workouts reset')
+})
+
+
+var LagTimer = React.createClass({
+	stop: function() {
+		clearInterval(this.state.timer);
 		this.setState({
-			currentId: 0,
-			current: this.props.excercises[0],
-			next: this.props.excercises[1],
-			showWorkouts: true,
-		});
+			timer: null,
+		})
 	},
-
+	handleFinish: function() {
+		this.stop();
+		this.props.endPause()
+	},
 	getInitialState: function() {
 		return {
-			currentId: 0,
-			current: this.props.excercises[0],
-			next: this.props.excercises[1],
-			showWorkouts: true,			
-		}
-
+			timer: null,
+			time: this.props.time || 5,
+			tick: 1,
+		};
 	},
+	componentDidMount: function() {
+		this.setState({
+			timer: setInterval(this.tick, 1000)
+		})
+	},
+	tick: function() {
+		this.setState({
+			time: this.state.time - this.state.tick,
+		})
+		if ( this.state.time <= 0 ) this.handleFinish();
+	},
+	componentWillUnmount: function() {
+		this.stop();
+	},
+	render: function() {
+		return (
+			<div className="row timer">
+				Get Ready...
+				<h1 className="timer-text">
+				{this.state.time}
+				</h1>
+			</div>
+		)
+	},
+})
 
+var Main = React.createClass({
+	getDefaultProps: function() {
+		var excercises = Excercises;
 
-	onNextWorkout: function() {
-		// console.log
-		alert("next workout!");
-		var idx = this.state.currentId+1;
+		console.log(excercises)
+		var totalTime = excercises
+			   .map( x => x.time )
+			   .reduce( (x,y) => x+y, 0);
+		
+		return {
+			excercises: excercises,
+			totalTime: totalTime,
+		}
+	},
+	endPause: function() {
+		this.setState({paused:false})
+		this.nowNextWorkout()
+	},
+	nowNextWorkout: function(number) {
+		var n = number || 1
+		var idx = this.state.currentId+n;
 
 		console.log('IDX',idx)
 
@@ -55,6 +104,9 @@ var Main = React.createClass({
 			var next = this.props.excercises[idx+1] || null;
 			var current = this.props.excercises[idx] || null;
 			// console.log('my excercise',next)
+
+			// TODO do small 5 second timeout
+
 			this.setState(
 			{
 				currentId: this.state.currentId+1,
@@ -62,31 +114,76 @@ var Main = React.createClass({
 				next:next,
 			})
 		}
-
-
-		
 	},
+
+	changeTimeLeft: function(number) {
+
+		if (this.state.timeLeft-number>0) 
+			this.setState({timeLeft:this.state.timeLeft-number});
+	},
+	resetExcercises: function() {
+		alert('workouts restarted!')
+
+		this.setState({
+			currentId: 0,
+			current: this.props.excercises[0],
+			next: this.props.excercises[1],
+			showWorkouts: true,
+			timeLeft: this.props.totalTime,
+		});
+	},
+
+	getInitialState: function() {
+		return {
+			currentId: -1,
+			current: this.props.excercises[0],
+			next: this.props.excercises[1],
+			showWorkouts: true,
+			timeLeft: this.props.totalTime,
+			paused: true,			
+		}
+
+	},
+	onNextWorkout: function() {
+		// TODO: go back in time
+		this.setState({paused:true})
+	},
+
 	render: function() {
-		console.log('Time Left', this.props.timeLeft)
+		var display;
+		if (this.state.paused) {
+			display = (
+				<LagTimer time={5} endPause={this.endPause}/>
+			);
+		}
+		else if (this.state.current)
+			display = (
+			<Workout 
+				current={this.state.current} 
+				next={this.state.next} 
+				onNextWorkout={this.onNextWorkout}
+				timeLeft={this.state.timeLeft}
+				changeTimeLeft={this.changeTimeLeft} />
+			);
+		else {
+			display = <ResetWorkouts reset={this.resetExcercises} />
+		}
+
+				
+		//console.log('Time Left', this.state.timeLeft)
 		
-		console.log(this.props.excercises[this.state.currentId])
+		//console.log(this.props.excercises[this.state.currentId])
 		return (
 		<div>
 
-			<div className="jumbotron">
-				<h1>
-				Ab Workout <Glyphicon name="heart"/> 
+			<div className="row title">
+				<h1 class="text-center">
+				Ab <Glyphicon name="heart"/> Workout  
 				</h1>
 			</div>
-		{ this.state.showWorkouts 
-			&& this.state.current ?
-		<Workout 
-			current={this.state.current} 
-			next={this.state.next} 
-			onNextWorkout={this.onNextWorkout}
-			timeLeft={this.props.timeLeft}/>
+
+			{ display }
 		
-		: <ResetWorkouts reset={this.resetExcercises} /> }
 
 		</div>
 		);
@@ -118,14 +215,22 @@ var Workout = React.createClass({
 		this.setState({showImage:!this.state.showImage});
 	},
 	render: function() {
-		console.log(this.props.current, this.props.next);
+		//console.log(this.props.current, this.props.next);
 		return (
 		<div>
 			<div className="row">
 				<button
-				  className="btn-row btn btn-primary" 
+				  className="btn btn-row btn-large" 
 				  onClick={this.toggleImage}>
-				  Show Picture for {this.props.current.name}
+
+				  	<div className="col-sm-4">
+						<TotalTimer time={this.props.timeLeft} />
+					</div>
+
+				  	<div className="col-sm-8 text-right">
+					  	<h2>Show {this.props.current.name}</h2>
+					</div>
+
 				 </button>
 			
 			{ this.state.showImage ? 
@@ -140,10 +245,9 @@ var Workout = React.createClass({
 			  current = {this.props.current}
 			  next = {this.props.next}
 			  timeLeft = {this.props.timeLeft}
-			  onNextWorkout={this.props.onNextWorkout}/>
+			  onNextWorkout={this.props.onNextWorkout}
+			  changeTimeLeft={this.props.changeTimeLeft} />
 			
-			<p>SHUFFLE</p>
-			<p>EQUIPMENT</p>
 		</div>
 		);
 	}
@@ -178,13 +282,25 @@ var Timer = React.createClass({
 		return {
 			time: parseInt(this.props.time) || 60,
 			tick: 1,
-			timeLeft: parseInt(this.props.timeLeft),
 			timer: null,
 			finished: false,
 		}
 	},
 	nextWorkout: function() {
 		this.props.onNextWorkout();
+		this.setState({
+			finished: true});
+		this.reset();
+		this.start();
+	},
+	goToNext: function() {
+		// set delta to current time difference
+		// you will subtract this from overall time
+		var delta = this.state.time;
+		// update workout
+		this.nextWorkout();
+		// modify global time
+		this.props.changeTimeLeft(delta);
 	},
 	start: function() {
 		// console.log(this.state.timer)
@@ -199,45 +315,45 @@ var Timer = React.createClass({
 		
 	},
 	handleWarnings: function(now) {
-		if (!this.state.finished) {
-			if (now <= 30) {
-				this.refs.timerText.style.color='darkred';
+		if (this.state.timer) {
+			// TODO save auido clips before hand
+			var snd = new Audio("a-tone.wav");
+			// console.log(this.props.time)
+			if (now == 30 && this.props.time>30) {
+				this.refs.timerText.style.color = 'red';
+				snd.play();
+				// this.setState({message: '30 seconds left!'})
 			}
-			else if (now <= 10) {
-				this.refs.timerText.style.color='red';
-			} else {
-				console.log(this.state.finished)
-				this.refs.timerText.style.color='';
+			else if (now == 10) {
+				this.refs.timerText.style.color = 'red';
+				snd.play();
 			}
+			else {
+				this.refs.timerText.style.color = '';
+			}
+			
 		}
-
 	},
 	handleFinished: function() {
 		// pull workout data from queue
 		if (this.state.time <= 0) {
 			this.stop();
 			this.nextWorkout();
-			this.reset();
-			this.start();
-			this.setState({finished: true});
 		}
 
 	},
-	update: function() { 
-		// hacky way to solve need t finish
+	update: function() {
 		if (this.state.timer) {
-			var now = this.state.time-this.state.tick;
-			var timeLeft = this.state.timeLeft-this.state.tick;
-			this.setState(
-				{
-					time: (now > 0) ? now : 0,
-					timeLeft: (timeLeft > 0) ? timeLeft: 0,
-				});
-			this.handleFinished();
-			this.handleWarnings(this.state.time);
-			
+		var now = this.state.time-this.state.tick;
+
+		this.props.changeTimeLeft(this.state.tick)
+		this.setState(
+			{
+				time: (now > 0) ? now : 0,
+			});
+		this.handleFinished();
+		this.handleWarnings(this.state.time);
 		}
-		
 	},
 	componentDidMount: function(){
 		this.start();
@@ -246,10 +362,10 @@ var Timer = React.createClass({
 		this.stop();
 	},
 	reset: function() {
+		this.props.changeTimeLeft(this.state.time - this.props.time)
 		this.setState({
 			time:this.props.time,
-			timeLeft:this.props.timeLeft
-		})
+		});		
 	},
 	setToZero: function() {
 		this.setState({time:0});
@@ -257,19 +373,18 @@ var Timer = React.createClass({
 	render: function() {
 
 		var resetBtn = 
-		  (this.state.timer === null) ? 
 		  <button 
 		    className='btn btn-danger btn-xlarge'
 		    onClick={this.reset} >
-		    Reset
-		  </button>: null;
+		    <Glyphicon name="repeat" />
+		  </button>
 
-		 var currentDiv = <div className="col-xs-6 strong">{
+		var currentDiv = <div className="col-xs-6 highlighted">{
 		 	   (this.props.current) ? 
 			 	"now: "+this.props.current.name 
 			 	: "Nothing" }</div>
 
-		 var nextDiv = <div className="col-xs-6 strong">{
+		var nextDiv = <div className="col-xs-6">{
 		 	    (this.props.next) ? 
 			 	"next: "+this.props.next.name
 			 	: "Nothing" }</div>
@@ -277,10 +392,12 @@ var Timer = React.createClass({
 		return (
 
 		<div className="row">
-			<h2>Time Left: {this.state.timeLeft}</h2>
+			
+
+
 			<div className="timer col-md-12 col-sm-12 col-lg-12"
 			 ref="timer">
-			    
+
 			    <div className="row">			 
 					 { currentDiv }
 					 { nextDiv }
@@ -291,8 +408,8 @@ var Timer = React.createClass({
 				{this.state.time}</h1>
 				
 			
-			<div className="btn-group" role="group">
-				<button className="btn btn-primary btn-xlarge"
+			<div className="">
+				<button className="btn btn-play btn-xlarge"
 				  onClick={ this.state.timer ? 
 				  	this.stop : this.start}> 
 				  
@@ -305,19 +422,44 @@ var Timer = React.createClass({
 				  </button>
 			  </div>
 
-			 { resetBtn }
 
 			 
 			 </div>
 
 
-			 <button className="btn-row btn btn-primary"
-			 onClick={this.setToZero}>End the current Time</button>
+			 <button className="btn-row btn"
+			 onClick={this.goToNext}>Next Excercise</button>
 
+			 <div className="btn-group">
+				 { resetBtn }
+				 <WorkoutShuffler />
+			 </div>
 		</div>
 		);
 	}
 
+});
+
+var TotalTimer = React.createClass({
+	getFormattedTime: function() {
+		var t = this.props.time;
+		// console.log( t / 60)
+		var minutes = Math.floor(t / 60);
+		var seconds = t % 60;
+
+		seconds = seconds<10 ? "0"+seconds : seconds;
+		minutes = minutes<10 ? "0"+minutes : minutes;
+
+		return minutes+":"+seconds;
+	},
+	render: function() {
+		var time = this.getFormattedTime()
+		return (
+			<div>
+			<h2>Time Left: {time}</h2>
+			</div>
+		);
+	}
 });
 
 

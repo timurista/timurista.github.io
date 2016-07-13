@@ -12,16 +12,29 @@
 
 
 	<style>
+	body {
+		background-color: #eee;
+	}
 	.timer{ 
 		text-align: center;
-		border: 1px solid #555;
-		border-radius: 5px;
-		background-color: #dfe3fc;
+		border: 3px solid #555;
+		border-radius: 25px;
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ebe9f9+0,d8d0ef+50,cec7ec+51,c1bfea+100;Purple+3D+%231 */
+background: #ebe9f9; /* Old browsers */
+background: -moz-linear-gradient(top,  #ebe9f9 0%, #d8d0ef 50%, #cec7ec 51%, #c1bfea 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  #ebe9f9 0%,#d8d0ef 50%,#cec7ec 51%,#c1bfea 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  #ebe9f9 0%,#d8d0ef 50%,#cec7ec 51%,#c1bfea 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebe9f9', endColorstr='#c1bfea',GradientType=0 ); /* IE6-9 */
+
+
+
+
 		padding-bottom: 40px;
 	}
 	.timer-text {
 		font-size: 8em;
 		font-family: Impact, Arial;
+
 
 	}
 	body { font-size: 4em;}
@@ -34,11 +47,38 @@
             border-radius: 8px;
             height: 160px;
 	}
+	.btn-play, .btn-row {
+		background-color: #6142cc;
+		color: #ebc014;
+	}
+	.btn-play:active, .btn-row:active, .btn-row:link {
+		color:#fff;
+	}
+	.btn-play:hover, .btn-row:hover {
+		background-color: #6142ff;
+		color: #ebc014;
+	}
+	.message {
+		background-color: #f5df8a;
+
+	}
 	.btn-row {
 		width: 100%;
+		font-size: 40px;
+		background-color: #6142cc;
+		color: #ebc014;
 	}
 	img { width:100%;}
-	.strong {font-weight: bolder;}
+	.highlighted {
+		font-weight: bolder; 
+		background-color: #ebc014;
+		border-radius: 20px;
+	}
+	.title {
+		text-align: center; 
+		background-color: #ddd;
+		margin-top: 60px;
+	}
 
 	</style>
 </head>
