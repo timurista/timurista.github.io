@@ -22,13 +22,13 @@ class JsBin extends React.Component {
     if (!props.show) return <div></div>;
     return (
       <div>
-      <iframe 
-        width="100%" 
-        height="300" 
-        src="//jsbin.com/cuneha/1/embed?html,js,output" 
-        allowfullscreen="allowfullscreen" 
-        frameborder="0">        
-      </iframe>
+        <iframe 
+          width="100%" 
+          height="300" 
+          src="//jsbin.com/cuneha/1/embed?html,js,output" 
+          allowfullscreen="allowfullscreen" 
+          frameborder="0">        
+        </iframe>
         </div>
       );
   }
