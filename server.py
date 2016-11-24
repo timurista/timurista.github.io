@@ -10,8 +10,9 @@ from watchdog.events import FileSystemEventHandler
 
 class MyHandler(FileSystemEventHandler):
     def on_modified(self, event):
-        print "Got it!"
-        buildJS()
+        print 'File changed:', event.src_path
+        if '.js' in event.src_path:
+	        buildJS()
 
 def buildJS():
 	# compile jsx into one jsx
@@ -35,11 +36,10 @@ def buildJS():
 
 				print >> open(currentDir+'/compiled/compiled.jsx', 'w'), s
 				s = ''
-				print 'made files in '+currentDir
+				print 'compiled files in '+currentDir
 				currentDir = folder
 
 			text = open(filename, 'r').read()
-			print file
 			s +='\n /** %s **/ \n%s' % (file.upper(), text)
 
 	if not os.path.exists(directory):
@@ -47,7 +47,7 @@ def buildJS():
 
 	print >> open(currentDir+'/compiled/compiled.jsx', 'w'), s
 	currentDir = folder
-	print 'made files in '+currentDir
+	print 'compiled files in '+currentDir
 
 
 def server():
@@ -70,16 +70,16 @@ def server():
 	httpd.serve_forever()
 
 if __name__ == "__main__":
-    event_handler = MyHandler()
-    observer = Observer()
-    observer.schedule(event_handler, path='.', recursive=True)
-    observer.start()
-    buildJS()
-    server()
+  buildJS()
+  event_handler = MyHandler()
+  observer = Observer()
+  observer.schedule(event_handler, path='.', recursive=True)
+  observer.start()
+  server()
 
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        observer.stop()
-    observer.join()
+  try:
+      while True:
+          time.sleep(1)
+  except KeyboardInterrupt:
+      observer.stop()
+  observer.join()

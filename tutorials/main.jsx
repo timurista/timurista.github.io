@@ -10,7 +10,7 @@ class Main extends React.Component {
         <Text 
           title="Hello World" 
           description="Basic hello world with React and jsbin support" />
-        <Example name="Hello World w/ React" />
+        <Example name="Hello World with React" />
         </div>
       </div>
     )

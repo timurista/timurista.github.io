@@ -31,6 +31,22 @@ class CodePen extends React.Component {
   }
 }
 
+class ExampleReact extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+  render() {
+    const el = <input></input>
+    console.log(el);
+    // console.log(React.renderToString(this))
+    return (
+      <div>
+      </div>
+      );
+  }
+}
+
 class Example extends React.Component {
   constructor(props) {
     super(props);
@@ -44,6 +60,7 @@ class Example extends React.Component {
         <button onClick={() => this.setState({show: !this.state.show})}>
         {msg} {props.name}</button>
         <CodePen show={this.state.show} />
+        <ExampleReact />
       </div>
     );
   }
