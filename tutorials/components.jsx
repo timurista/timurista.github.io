@@ -38,7 +38,7 @@ class Example extends React.Component {
   }
   render() {
     const {props, state} = this;
-    const msg = (!state.show) ? 'show' : 'hide';
+    const msg = (!state.show) ? 'Show' : 'hide';
     return (
       <div>
         <button onClick={() => this.setState({show: !this.state.show})}>

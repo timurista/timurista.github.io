@@ -1,4 +1,5 @@
 
+ /** COMPONENTS.JSX **/ 
 // class 
 class JsBin extends React.Component {
   render() {
@@ -39,7 +40,7 @@ class Example extends React.Component {
   }
   render() {
     const {props, state} = this;
-    const msg = (!state.show) ? 'show' : 'hide';
+    const msg = (!state.show) ? 'Show' : 'hide';
     return (
       <div>
         <button onClick={() => this.setState({show: !this.state.show})}>
@@ -49,6 +50,7 @@ class Example extends React.Component {
     );
   }
 }
+ /** EXAMPLES.JSX **/ 
 // for holding text info 
 class Text extends React.Component {
   render() {
@@ -58,6 +60,7 @@ class Text extends React.Component {
   }
 }
 
+ /** MAIN.JSX **/ 
 class Main extends React.Component {
   render() {
     const {props, state} = this;
@@ -77,7 +80,7 @@ class Main extends React.Component {
   }
 }
 
-(ReactDOM.render(
+ReactDOM.render(
   <Main />,
   document.getElementById('main')
-))();
+)

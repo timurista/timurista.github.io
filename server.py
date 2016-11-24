@@ -1,58 +1,85 @@
+#!/usr/bin/python
 import sys
 import BaseHTTPServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 import os
 import glob
+import time
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
-HandlerClass = SimpleHTTPRequestHandler
-ServerClass  = BaseHTTPServer.HTTPServer
-Protocol     = "HTTP/1.0"
+class MyHandler(FileSystemEventHandler):
+    def on_modified(self, event):
+        print "Got it!"
+        buildJS()
 
-if sys.argv[1:]:
-    port = int(sys.argv[1])
-else:
-    port = 8000
-server_address = ('127.0.0.1', port)
+def buildJS():
+	# compile jsx into one jsx
+	i = 0
+	currentDir = ''
+	s = ''
 
-HandlerClass.protocol_version = Protocol
-httpd = ServerClass(server_address, HandlerClass)
+	for filename in glob.iglob('./**/*.jsx'):
+			root, folder, file = filename.split('/')
 
-# compile jsx into one jsx
-i = 0
-currentDir = ''
-s = ''
+			if i == 0:
+				currentDir = folder
+				directory = os.path.join(root, folder, 'compiled')
+				i = 1
 
-for filename in glob.iglob('./**/*.jsx'):
-		root, folder, file = filename.split('/')
+			if currentDir != folder:
 
-		
+				if not os.path.exists(directory):
+					os.makedirs(directory)
+				print directory
 
-		if i == 0:
-			currentDir = folder
-			directory = os.path.join(root, folder, 'compiled')
-			i = 1
+				print >> open(currentDir+'/compiled/compiled.jsx', 'w'), s
+				s = ''
+				print 'made files in '+currentDir
+				currentDir = folder
 
-		if currentDir != folder:
+			text = open(filename, 'r').read()
+			print file
+			s +='\n /** %s **/ \n%s' % (file.upper(), text)
 
-			if not os.path.exists(directory):
-				os.makedirs(directory)
-			print directory
+	if not os.path.exists(directory):
+	  os.makedirs(directory)
 
-			print >> open(currentDir+'/compiled/compiled.jsx', 'w'), s
-			s = ''
-			print 'made files in '+currentDir
-			currentDir = folder
+	print >> open(currentDir+'/compiled/compiled.jsx', 'w'), s
+	currentDir = folder
+	print 'made files in '+currentDir
 
-		text = open(filename, 'r').read()
-		s +='\n'+text
 
-if not os.path.exists(directory):
-  os.makedirs(directory)
+def server():
 
-print >> open(currentDir+'/compiled/compiled.jsx', 'w'), s
-currentDir = folder
-print 'made files in '+currentDir
+	HandlerClass = SimpleHTTPRequestHandler
+	ServerClass  = BaseHTTPServer.HTTPServer
+	Protocol     = "HTTP/1.0"
 
-sa = httpd.socket.getsockname()
-# print "Serving HTTP on", sa[0], "port", sa[1], "..."
-# httpd.serve_forever()
+	if sys.argv[1:]:
+	    port = int(sys.argv[1])
+	else:
+	    port = 8000
+	server_address = ('127.0.0.1', port)
+
+	HandlerClass.protocol_version = Protocol
+	httpd = ServerClass(server_address, HandlerClass)
+	sa = httpd.socket.getsockname()
+
+	print "Serving HTTP on", sa[0], "port", sa[1], "..."
+	httpd.serve_forever()
+
+if __name__ == "__main__":
+    event_handler = MyHandler()
+    observer = Observer()
+    observer.schedule(event_handler, path='.', recursive=True)
+    observer.start()
+    buildJS()
+    server()
+
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        observer.stop()
+    observer.join()
