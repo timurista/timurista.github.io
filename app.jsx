@@ -5,8 +5,9 @@
 export default class App React.Component {
 	render() {
 		return (
-			<div>
-				another class
+			<div className='myApp'>
+				<ul>				
+				</ul>
 			</div>
 			)
 	}

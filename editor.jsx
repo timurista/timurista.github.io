@@ -6,8 +6,10 @@ class App extends React.Component {
 		this.state = {
 			urls: [
 				{url: 'ab_workout/ab_workout.html', name:'Ultimate Ab Workout App'},
-				{url: 'payforward/', name:'Pay it Forward App'},
-				{url: 'maths/', name:'Math Functions'},
+				{url: 'library/', name:'Open Library Project'},
+				// {url: 'payforward/', name:'Pay it Forward App'},
+				// {url: 'maths/', name:'Math Functions'},
+
 			]
 		}
 	}
