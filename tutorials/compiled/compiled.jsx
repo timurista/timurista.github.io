@@ -19,6 +19,16 @@ class JsBin extends React.Component {
   }
 }
 
+class CodePen extends React.Component {
+  render() {
+    if (!this.props.show) return <div></div>;
+    return (
+      <iframe height='265' scrolling='no' title='React Template' src='//codepen.io/timurista/embed/pNwPjG/?height=265&theme-id=light&default-tab=js,result&embed-version=2' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'>See the Pen <a href='https://codepen.io/timurista/pen/pNwPjG/'>React Template</a> by tim urista (<a href='http://codepen.io/timurista'>@timurista</a>) on <a href='http://codepen.io'>CodePen</a>.
+</iframe>
+      )
+  }
+}
+
 class Example extends React.Component {
   constructor(props) {
     super(props);
@@ -29,7 +39,7 @@ class Example extends React.Component {
     return (
       <div>
         <button onClick={() => this.setState({show: !this.state.show})}>Show {props.name}</button>
-        <JsBin show={this.state.show} />
+        <CodePen show={this.state.show} />
       </div>
     );
   }
