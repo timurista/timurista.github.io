@@ -6,7 +6,7 @@ class App extends React.Component {
 		this.state = {
 			urls: [
 				{url: 'ab_workout/ab_workout.html', name:'Ultimate Ab Workout App'},
-        {url: 'library/', name:'Open Library Project'},
+        {url: 'maths/', name:'Mathematics Calculators'},
 				{url: 'tutorials/', name:'React and JS Tutorials'},
 				// {url: 'payforward/', name:'Pay it Forward App'},
 				// {url: 'maths/', name:'Math Functions'},
@@ -18,6 +18,7 @@ class App extends React.Component {
   render() {
   	const urls = this.state.urls.map( (obj) => {
   		const { url, name } = obj;
+      console.info('url', url, name);
   		return <li key={name}><a href={url}>{name}</a></li>;
   	})
     return (
