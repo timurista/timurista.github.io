@@ -30,11 +30,13 @@ def buildJS():
 
 			if currentDir != folder:
 
+				directory = os.path.join(root, currentDir, 'compiled')
 				if not os.path.exists(directory):
 					os.makedirs(directory)
-				print directory
+					print '	made directory: ', directory
 
-				print >> open(currentDir+'/compiled/compiled.jsx', 'w'), s
+				print >> open(os.path.join(directory,'compiled.jsx'), 
+					'w'), s
 				s = ''
 				print 'compiled files in '+currentDir
 				currentDir = folder
