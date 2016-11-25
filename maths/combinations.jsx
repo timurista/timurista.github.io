@@ -73,6 +73,7 @@ class Combinations extends React.Component {
           Calculate
         </button>
         {state.answer}
+        
       </div>)
   }
 }
