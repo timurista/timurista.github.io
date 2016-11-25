@@ -4,7 +4,7 @@ class Combinations extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { answer: <div></div> };
+    this.state = { answer: <div></div>, show:true };
     this.calcPerms = this.calcPerms.bind(this);
   }
 
@@ -58,6 +58,8 @@ class Combinations extends React.Component {
   render() {
     console.log('render')
     const {props, state} = this;
+    const answer = (state.show) ? state.answer : <div></div>;
+
     return (<div>
         <h3>Calculate Combinations</h3>
         <div>
@@ -74,7 +76,11 @@ class Combinations extends React.Component {
           onClick={this.calcPerms}>
           Calculate
         </button>
-        {state.answer}
+        <button key='showHide' onClick={() => this.setState({show: !state.show })}>
+        Show/Hide
+        </button>
+        {answer}
+
       </div>)
   }
 }
@@ -83,7 +89,7 @@ class Permutations extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { answer: <div></div> };
+    this.state = { answer: <div></div>, show:true };
     this.calcPerms = this.calcPerms.bind(this);
   }
 
@@ -131,6 +137,7 @@ class Permutations extends React.Component {
   render() {
     console.log('render')
     const {props, state} = this;
+    const answer = (state.show) ? state.answer : <div></div>;
     return (<div>
         <h3>Calculate Permuations</h3>
         <div>
@@ -147,7 +154,10 @@ class Permutations extends React.Component {
           onClick={this.calcPerms}>
           Calculate
         </button>
-        {state.answer}
+        <button key='showHide' onClick={() => this.setState({show: !state.show })}>
+        Show/Hide
+        </button>
+        {answer}
       </div>)
   }
 }

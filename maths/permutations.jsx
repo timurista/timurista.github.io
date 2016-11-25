@@ -38,7 +38,7 @@ class Permutations extends React.Component {
     const renderedSteps = steps.map( (step,i) => 
       <li key={i}>{step}</li>
       )
-    this.setState({answer:<div hidden={this.state.show}>
+    this.setState({answer:<div>
       <h3>The Answer for P({n}, {r}) = {result}</h3>
       <ol>
         {renderedSteps}
@@ -50,6 +50,7 @@ class Permutations extends React.Component {
   render() {
     console.log('render')
     const {props, state} = this;
+    const answer = (state.show) ? state.answer : <div></div>;
     return (<div>
         <h3>Calculate Permuations</h3>
         <div>
@@ -66,10 +67,10 @@ class Permutations extends React.Component {
           onClick={this.calcPerms}>
           Calculate
         </button>
-        <button key='showHide' onClick={() => this.setState({show: !this.state.show })}>
+        <button key='showHide' onClick={() => this.setState({show: !state.show })}>
         Show/Hide
         </button>
-        {state.answer}
+        {answer}
       </div>)
   }
 }
