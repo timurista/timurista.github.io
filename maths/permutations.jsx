@@ -20,25 +20,17 @@ class Permutations extends React.Component {
     for (let j=n-r; j>=1; j--) {
       bottom.push(j);
     }
-    let steps = []
+    let steps = [];
     const result = n_fac / nr_fac;
-    steps.push(`n! = ${n}! and (n-r)! = (${n} -${r})! = ${n-r}!`);
+    steps.push(`n!/(n-r)! = ${n}! / ((${n} -${r})! = ${n-r}!))`);
     steps.push(`${n}! = (${top.join(' * ')}) = ${n_fac}`);
     steps.push(`${n-r}! = (${bottom.join(' * ') }) = ${nr_fac}`);
-    steps.push(`n! = ${n_fac} and (n-r)! = ${nr_fac}`);
+    steps.push(`n! = ${n_fac}`);
+    steps.push(`(n-r)! = ${nr_fac}`);
     steps.push(`${n_fac} / ${nr_fac} = ${result}`);
-    steps.push(`So n!/(n-r)! is equal to ${result}`);
-    console.log(steps)
-    const renderedSteps = steps.map( (step,i) => 
-      <li key={i}>{step}</li>
-      )
-    this.setState({answer:<div>
-      <h3>The Answer for P({n}, {r}) = {result}</h3>
-      <ol>
-        {renderedSteps}
-      </ol>
-      </div>
-    })
+    steps.push(`Therefore, n!/(n-r)! = ${result}`);
+
+    this.setState({answer:result, steps:steps});
   }
 
   render() {

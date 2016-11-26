@@ -25,25 +25,16 @@ class Combinations extends React.Component {
       bottomr.push(k);
     }
     let steps = []
-    const result = n_fac / (r_fac*nr_fac);
-    steps.push(`n! = ${n}!, r! =${r}! and (n-r)! = (${n} -${r})! = ${n-r}!`);
+    const result = n_fac / (r_fac * nr_fac);
+    steps.push(`n!/r!(n-r)! = ${n}!/${r}!((${n} -${r})! = ${n-r}!))`);
     steps.push(`${n}! = (${top.join(' * ')}) = ${n_fac}`);
     steps.push(`${n-r}! = (${bottom.join(' * ') }) = ${nr_fac}`);
     steps.push(`${r}! = (${bottom.join(' * ') }) = ${r_fac}`);
-    steps.push(`n! = ${n_fac}, r! = ${r_fac} and (n-r)! = ${nr_fac}`);
+    steps.push(`n!/r!(n-r)! = ${n_fac}/${r_fac}(${nr_fac})`);
     steps.push(`${n_fac} / (${r_fac} * ${nr_fac}) = ${result}`);
-    steps.push(`So n!/r!(n-r)! is equal to ${result}`);
-    console.log(steps)
-    const renderedSteps = steps.map( (step,i) => 
-      <li key={i}>{step}</li>
-      )
-    this.setState({answer:<div>
-      <h3>The Answer for C({n}, {r}) = {result}</h3>
-      <ol>
-        {renderedSteps}
-      </ol>
-      </div>
-    })
+    steps.push(`Therefore n!/r!(n-r)! = ${result}`);
+
+    this.setState({answer:result, steps:steps});
   }
 
   render() {

@@ -27,25 +27,16 @@ class Combinations extends React.Component {
       bottomr.push(k);
     }
     let steps = []
-    const result = n_fac / (r_fac*nr_fac);
-    steps.push(`n! = ${n}!, r! =${r}! and (n-r)! = (${n} -${r})! = ${n-r}!`);
+    const result = n_fac / (r_fac * nr_fac);
+    steps.push(`n!/r!(n-r)! = ${n}!/${r}!((${n} -${r})! = ${n-r}!))`);
     steps.push(`${n}! = (${top.join(' * ')}) = ${n_fac}`);
     steps.push(`${n-r}! = (${bottom.join(' * ') }) = ${nr_fac}`);
     steps.push(`${r}! = (${bottom.join(' * ') }) = ${r_fac}`);
-    steps.push(`n! = ${n_fac}, r! = ${r_fac} and (n-r)! = ${nr_fac}`);
+    steps.push(`n!/r!(n-r)! = ${n_fac}/${r_fac}(${nr_fac})`);
     steps.push(`${n_fac} / (${r_fac} * ${nr_fac}) = ${result}`);
-    steps.push(`So n!/r!(n-r)! is equal to ${result}`);
-    console.log(steps)
-    const renderedSteps = steps.map( (step,i) => 
-      <li key={i}>{step}</li>
-      )
-    this.setState({answer:<div>
-      <h3>The Answer for C({n}, {r}) = {result}</h3>
-      <ol>
-        {renderedSteps}
-      </ol>
-      </div>
-    })
+    steps.push(`Therefore n!/r!(n-r)! = ${result}`);
+
+    this.setState({answer:result, steps:steps});
   }
 
   render() {
@@ -60,12 +51,27 @@ class Combinations extends React.Component {
 class MathExample extends React.Component {
 	 constructor(props) {
     super(props);
-    this.state = { answer: <div></div>, show:true };
+    this.state = { steps:[], answer:null, show:true };
+  }
+  toggleVisible() {
+  	this.setState({show: !this.state.show});
   }
   render() {
-  	const {props, state} = this;
-    const answer = (state.show) ? state.answer : <div></div>;    
+  	const {props, state} = this;  
     const renderFormula = props.latexFormula || props.formula;
+    const steps = state.steps.map( (step) => (
+    	<li><math xmlns="http://www.w3.org/1998/Math/MathML">{step}</math></li>
+    	))
+    const solution = (
+    	<div>
+    	<h3>Answer: {state.answer}</h3>
+        <ul>
+        {steps}
+        </ul>
+      </div>
+      );
+
+    const renderedSolution = (state.show && state.answer) ? solution : <div></div>;  
 
     return (<div>
         <h3>{props.name}</h3>
@@ -82,14 +88,13 @@ class MathExample extends React.Component {
         </div>
         <button 
           key='calculate' 
-          onClick={props.calcFunction.bind(this)}>
+          onClick={() => {this.setState({show: true}); props.calcFunction.apply(this)}}>
           Calculate
         </button>
-        <button key='showHide' onClick={() => this.setState({show: !state.show })}>
+        <button key='showHide' onClick={this.toggleVisible.bind(this)}>
         Show/Hide
         </button>
-        {answer}
-
+        {renderedSolution}
       </div>)
   }
 }
@@ -117,25 +122,17 @@ class Permutations extends React.Component {
     for (let j=n-r; j>=1; j--) {
       bottom.push(j);
     }
-    let steps = []
+    let steps = [];
     const result = n_fac / nr_fac;
-    steps.push(`n! = ${n}! and (n-r)! = (${n} -${r})! = ${n-r}!`);
+    steps.push(`n!/(n-r)! = ${n}! / ((${n} -${r})! = ${n-r}!))`);
     steps.push(`${n}! = (${top.join(' * ')}) = ${n_fac}`);
     steps.push(`${n-r}! = (${bottom.join(' * ') }) = ${nr_fac}`);
-    steps.push(`n! = ${n_fac} and (n-r)! = ${nr_fac}`);
+    steps.push(`n! = ${n_fac}`);
+    steps.push(`(n-r)! = ${nr_fac}`);
     steps.push(`${n_fac} / ${nr_fac} = ${result}`);
-    steps.push(`So n!/(n-r)! is equal to ${result}`);
-    console.log(steps)
-    const renderedSteps = steps.map( (step,i) => 
-      <li key={i}>{step}</li>
-      )
-    this.setState({answer:<div>
-      <h3>The Answer for P({n}, {r}) = {result}</h3>
-      <ol>
-        {renderedSteps}
-      </ol>
-      </div>
-    })
+    steps.push(`Therefore, n!/(n-r)! = ${result}`);
+
+    this.setState({answer:result, steps:steps});
   }
 
   render() {
@@ -148,23 +145,45 @@ class Permutations extends React.Component {
 }
  /** ZMAIN.JSX **/ 
 class Main extends React.Component {
+  constructor(props) {
+    super(props);
+    this.renderedMathEqs = [
+      {name:'permuations', el:<Permutations />}, 
+      {name:'combinations', el:<Combinations />} 
+    ];
+    this.state = {
+      mathEquation: this.renderedMathEqs[0].el,
+    }
+    this.handleMathEqChange = this.handleMathEqChange.bind(this);
+  }
+  handleMathEqChange(event) {
+    var index = this.renderedMathEqs.map(function(o) { return o.name; }).indexOf(event.target.value);
+
+    this.setState({mathEquation: this.renderedMathEqs[index].el });
+  }
+
   render() {
     const {props, state} = this;
-
-    const renderedMathEqs = [ <Permutations />, 
-    <Combinations /> ];
-
     // radio button switches which to render
-
     return (
-      <div>
-        <h2>Calculates permutations and combinations</h2>
-        <p> The two programs will calculate permutations
-        And lis the steps required to complete them </p>
-        <div className="row">
-        {renderedMathEqs.map( (eq) => <div className="col-sm-6">{eq}</div>)}    
+      <div className='container'>
+        <div className='row' >        
+          <div className='col-md-8 col-md-offset-2 centered'>
+            <h2 className='jumbotron'>Math Formulas</h2>
+            <p> The two programs will calculate various mathematical formuals with steps for each one </p>
+
+              <select className='form-control' name='mathEq' onChange={this.handleMathEqChange}>
+                <option value='' disabled selected>Select the math equation/formula...</option>
+                {this.renderedMathEqs.map( x => <option>{x.name}</option>)}
+              </select>
+            <div className='row'>
+              <div className='col-sm-8 col-sm-offset-2'>
+                {state.mathEquation}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+        </div>
     );
   }
 }
