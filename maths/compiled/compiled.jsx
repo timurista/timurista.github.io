@@ -170,7 +170,7 @@ class Main extends React.Component {
         <div className='row' >        
           <div className='col-md-8 col-md-offset-2 centered'>
             <h2 className='jumbotron'>Math Formulas</h2>
-            <p> The two programs will calculate various mathematical formuals with steps for each one </p>
+            <p> This program will calculate various mathematical formuals with steps for each one </p>
 
               <select className='form-control' name='mathEq' onChange={this.handleMathEqChange}>
                 <option value='' disabled selected>Select the math equation/formula...</option>
