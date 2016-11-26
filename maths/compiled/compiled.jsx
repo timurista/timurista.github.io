@@ -71,7 +71,10 @@ class MathExample extends React.Component {
       </div>
       );
 
-    const renderedSolution = (state.show && state.answer) ? solution : <div></div>;  
+    const renderedSolution = (state.show && state.answer) ? solution : <div></div>;
+    const scriptRender = (<script type="text/javascript" async
+		  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+		</script>);
 
     return (<div>
         <h3>{props.name}</h3>
@@ -95,7 +98,11 @@ class MathExample extends React.Component {
         Show/Hide
         </button>
         {renderedSolution}
+        {scriptRender}
+        
+
       </div>)
+
   }
 }
 
