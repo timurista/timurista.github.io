@@ -5,19 +5,22 @@ class MathExample extends React.Component {
   }
   render() {
   	const {props, state} = this;
-    const answer = (state.show) ? state.answer : <div></div>;
+    const answer = (state.show) ? state.answer : <div></div>;    
+    const renderFormula = props.latexFormula || props.formula;
 
     return (<div>
         <h3>{props.name}</h3>
-        <div>
-        <em>{props.formula}</em>
+        <div className='lead'>
+	        <em>{ `$$ ${renderFormula} $$`}</em>
         </div>
-        <span>
-        <label>n (objects)</label>
-        <input type='number' defaultValue={1} ref={(n) => this.n = n} />
-        <label>r (sample)</label>
-        <input type='number' defaultValue={1} ref={(r) => this.r = r} />
-        </span>
+        <div>
+	        <label>n (objects)</label>
+	        <input type='number' defaultValue={1} ref={(n) => this.n = n} />
+	      </div>
+        <div>
+	        <label>r (sample)</label>
+	        <input type='number' defaultValue={1} ref={(r) => this.r = r} />
+        </div>
         <button 
           key='calculate' 
           onClick={props.calcFunction.bind(this)}>

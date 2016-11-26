@@ -2,25 +2,18 @@
  /** COMBINATIONS.JSX **/ 
 class Combinations extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = { answer: <div></div>, show:true };
-    this.calcPerms = this.calcPerms.bind(this);
-  }
-
-  factorial(num) {
-    let rval=1;
-    for (let i = 2; i <= num; i++)
-        rval = rval * i;
-    return rval;
-  }
-
-  calcPerms() {
+  calcCombos() {
+    const factorial = (num) => {
+      let rval=1;
+      for (let i = 2; i <= num; i++)
+          rval = rval * i;
+      return rval;
+    }
     const r = this.r.value || 0;
     const n = this.n.value || 1;
-    const n_fac = this.factorial(n);
-    const nr_fac = this.factorial(n-r);
-    const r_fac = this.factorial(r);
+    const n_fac = factorial(n);
+    const nr_fac = factorial(n-r);
+    const r_fac = factorial(r);
     const top =[]
     const bottom=[]
     const bottomr=[]
@@ -56,32 +49,11 @@ class Combinations extends React.Component {
   }
 
   render() {
-    console.log('render')
-    const {props, state} = this;
-    const answer = (state.show) ? state.answer : <div></div>;
-
-    return (<div>
-        <h3>Calculate Combinations</h3>
-        <div>
-        <em>formula: P = n! / r!(n-r)!</em>
-        </div>
-        <span>
-        <label>n (objects)</label>
-        <input type='number' defaultValue={1} ref={(n) => this.n = n} />
-        <label>r (sample)</label>
-        <input type='number' defaultValue={1} ref={(r) => this.r = r} />
-        </span>
-        <button 
-          key='calculate' 
-          onClick={this.calcPerms}>
-          Calculate
-        </button>
-        <button key='showHide' onClick={() => this.setState({show: !state.show })}>
-        Show/Hide
-        </button>
-        {answer}
-
-      </div>)
+    return <MathExample 
+      name="Combinations" 
+      formula="C(n,r) = n! / r!(n-r)!"
+      latexFormula = "C(n,r) = \frac {n!} {r!(n-r)!}"
+      calcFunction={this.calcCombos} />
   }
 }
  /** MATHEXAMPLE.JSX **/ 
@@ -92,19 +64,22 @@ class MathExample extends React.Component {
   }
   render() {
   	const {props, state} = this;
-    const answer = (state.show) ? state.answer : <div></div>;
+    const answer = (state.show) ? state.answer : <div></div>;    
+    const renderFormula = props.latexFormula || props.formula;
 
     return (<div>
         <h3>{props.name}</h3>
-        <div>
-        <em>{props.formula}</em>
+        <div className='lead'>
+	        <em>{ `$$ ${renderFormula} $$`}</em>
         </div>
-        <span>
-        <label>n (objects)</label>
-        <input type='number' defaultValue={1} ref={(n) => this.n = n} />
-        <label>r (sample)</label>
-        <input type='number' defaultValue={1} ref={(r) => this.r = r} />
-        </span>
+        <div>
+	        <label>n (objects)</label>
+	        <input type='number' defaultValue={1} ref={(n) => this.n = n} />
+	      </div>
+        <div>
+	        <label>r (sample)</label>
+	        <input type='number' defaultValue={1} ref={(r) => this.r = r} />
+        </div>
         <button 
           key='calculate' 
           onClick={props.calcFunction.bind(this)}>
@@ -168,21 +143,27 @@ class Permutations extends React.Component {
       name="Permuations" 
       calcFunction={this.calcPerms}
       formula="P(n,r) = !n / (n-r)!"
-      />
+      latexFormula='P(n,r) = \frac {n!} {(n-r)!}' />
   }
 }
  /** ZMAIN.JSX **/ 
 class Main extends React.Component {
   render() {
     const {props, state} = this;
-    console.log(window);
+
+    const renderedMathEqs = [ <Permutations />, 
+    <Combinations /> ];
+
+    // radio button switches which to render
+
     return (
       <div>
         <h2>Calculates permutations and combinations</h2>
         <p> The two programs will calculate permutations
-        And lis the steps required to complete them </p>      
-        <Permutations />        
-        <Combinations />        
+        And lis the steps required to complete them </p>
+        <div className="row">
+        {renderedMathEqs.map( (eq) => <div className="col-sm-6">{eq}</div>)}    
+        </div>
       </div>
     );
   }

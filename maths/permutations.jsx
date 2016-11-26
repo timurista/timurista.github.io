@@ -46,6 +46,6 @@ class Permutations extends React.Component {
       name="Permuations" 
       calcFunction={this.calcPerms}
       formula="P(n,r) = !n / (n-r)!"
-      />
+      latexFormula='P(n,r) = \frac {n!} {(n-r)!}' />
   }
 }
