@@ -1,34 +1,36 @@
 class Permutations extends React.Component {
 
   calcPerms() {
-    const factorial = (num) => {
-      let rval=1;
-      for (let i = 2; i <= num; i++)
-          rval = rval * i;
-      return rval;
-    }
-
     const r = this.r.value || 0;
     const n = this.n.value || 1;
-    const n_fac = factorial(n);
-    const nr_fac = factorial(n-r);
-    const top =[]
-    const bottom=[]
+    const n_fac = this.factorial(n);
+    const nr_fac = this.factorial(n-r);
+    let top =[]
+    let bottom=[]
     for (let i=n; i>=1; i--) {
       top.push(i);
     }
     for (let j=n-r; j>=1; j--) {
       bottom.push(j);
     }
+
+    top = this.shortenArray(top);
+    bottom = this.shortenArray(bottom);
+
     let steps = [];
     const result = n_fac / nr_fac;
+
+    const displayN_Fac = this.formatNumber(n_fac);
+    const displayNR_Fac = this.formatNumber(nr_fac);
+    const displayResult = this.formatNumber(result);
+
     steps.push(`n!/(n-r)! = ${n}! / ((${n} -${r})! = ${n-r}!))`);
-    steps.push(`${n}! = (${top.join(' * ')}) = ${n_fac}`);
-    steps.push(`${n-r}! = (${bottom.join(' * ') }) = ${nr_fac}`);
-    steps.push(`n! = ${n_fac}`);
-    steps.push(`(n-r)! = ${nr_fac}`);
-    steps.push(`${n_fac} / ${nr_fac} = ${result}`);
-    steps.push(`Therefore, n!/(n-r)! = ${result}`);
+    steps.push(`${n}! = (${top.join(' * ')}) = ${displayN_Fac}`);
+    steps.push(`${n-r}! = (${bottom.join(' * ') }) = ${displayNR_Fac}`);
+    steps.push(`n! = ${displayN_Fac}`);
+    steps.push(`(n-r)! = ${displayNR_Fac}`);
+    steps.push(`${displayN_Fac} / ${displayNR_Fac} = ${displayResult}`);
+    steps.push(`Therefore, n!/(n-r)! = ${displayResult}`);
 
     this.setState({answer:result, steps:steps});
   }

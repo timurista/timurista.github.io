@@ -1,20 +1,14 @@
 class Combinations extends React.Component {
 
   calcCombos() {
-    const factorial = (num) => {
-      let rval=1;
-      for (let i = 2; i <= num; i++)
-          rval = rval * i;
-      return rval;
-    }
     const r = this.r.value || 0;
     const n = this.n.value || 1;
-    const n_fac = factorial(n);
-    const nr_fac = factorial(n-r);
-    const r_fac = factorial(r);
-    const top =[]
-    const bottom=[]
-    const bottomr=[]
+    const n_fac = this.factorial(n);
+    const nr_fac = this.factorial(n-r);
+    const r_fac = this.factorial(r);
+    let top =[]
+    let bottom=[]
+    let bottomr=[]
     for (let i=n; i>=1; i--) {
       top.push(i);
     }
@@ -24,15 +18,22 @@ class Combinations extends React.Component {
     for (let k=r; k>=1; k--) {
       bottomr.push(k);
     }
+
+
     let steps = []
     const result = n_fac / (r_fac * nr_fac);
+
+    const displayN_Fac = this.formatNumber(n_fac);
+    const displayR_Fac = this.formatNumber(r_fac);
+    const displayNR_Fac = this.formatNumber(nr_fac);
+    const displayResult = this.formatNumber(result);
     steps.push(`n!/r!(n-r)! = ${n}!/${r}!((${n} -${r})! = ${n-r}!))`);
-    steps.push(`${n}! = (${top.join(' * ')}) = ${n_fac}`);
-    steps.push(`${n-r}! = (${bottom.join(' * ') }) = ${nr_fac}`);
-    steps.push(`${r}! = (${bottom.join(' * ') }) = ${r_fac}`);
-    steps.push(`n!/r!(n-r)! = ${n_fac}/${r_fac}(${nr_fac})`);
-    steps.push(`${n_fac} / (${r_fac} * ${nr_fac}) = ${result}`);
-    steps.push(`Therefore n!/r!(n-r)! = ${result}`);
+    steps.push(`${n}! = (${top.join(' * ')}) = ${displayN_Fac}`);
+    steps.push(`${n-r}! = (${bottom.join(' * ') }) = ${displayNR_Fac}`);
+    steps.push(`${r}! = (${bottom.join(' * ') }) = ${displayR_Fac}`);
+    steps.push(`n!/r!(n-r)! = ${displayN_Fac}/${displayR_Fac} * (${displayNR_Fac})`);
+    steps.push(`${displayN_Fac} / (${displayR_Fac} * ${displayNR_Fac}) = ${displayResult}`);
+    steps.push(`Therefore n!/r!(n-r)! = ${displayResult}`);
 
     this.setState({answer:result, steps:steps});
   }
