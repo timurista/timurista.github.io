@@ -19,7 +19,9 @@ class Combinations extends React.Component {
       bottomr.push(k);
     }
 
-
+    top = this.shortenArray(top);
+    bottom = this.shortenArray(bottom);
+    bottomr = this.shortenArray(bottomr);
     let steps = []
     const result = n_fac / (r_fac * nr_fac);
 

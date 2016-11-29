@@ -21,7 +21,9 @@ class Combinations extends React.Component {
       bottomr.push(k);
     }
 
-
+    top = this.shortenArray(top);
+    bottom = this.shortenArray(bottom);
+    bottomr = this.shortenArray(bottomr);
     let steps = []
     const result = n_fac / (r_fac * nr_fac);
 
@@ -59,12 +61,18 @@ class MathExample extends React.Component {
   }
 
   shortenArray(array) {
-    let arr = array.slice();    
+    let arr = array.slice();
+    if (arr.length <6) {
+      return arr;
+    }    
     let newArray =[];
-    if (arr.length>=5) {
-      newArray.push(arr.slice(0,2));
+    console.log(arr, arr.length)
+    if (arr.length>=6) {
+      newArray.push(arr[0]);
+      newArray.push(arr[1]);
       newArray.push('...');
-      newArray.push(arr.slice(arr.length-2));
+      newArray.push(arr[arr.length-2]);
+      newArray.push(arr[arr.length-1]);
     }
     return newArray;
   }
@@ -127,6 +135,7 @@ class MathExample extends React.Component {
       );
 
     const renderedSolution = (state.show && state.answer) ? solution : <div></div>;
+    window.MathJax.Hub.Update();
     // update mathjax
     // Update();
 
