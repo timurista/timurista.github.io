@@ -7,10 +7,8 @@ class App extends React.Component {
 			urls: [
 				{url: 'ab_workout/ab_workout.html', name:'Ultimate Ab Workout App'},
         {url: 'maths/', name:'Mathematics Calculators'},
-				{url: 'tutorials/', name:'React and JS Tutorials'},
-				// {url: 'payforward/', name:'Pay it Forward App'},
-				// {url: 'maths/', name:'Math Functions'},
-
+        {url: 'tutorials/', name:'React and JS Tutorials'},
+				{url: 'library/', name:'Library and Api Calls'},
 			]
 		}
 	}

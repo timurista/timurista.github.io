@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 // useful for redux container
 import * as actions from '../actions';
 
-export default class CommentBox extends Component {
+class CommentBox extends Component {
 	constructor(props) {
 		super(props);
 		this.state = { comment: '' };

@@ -14,12 +14,25 @@ class Library extends React.Component {
       this.setState({result: data});
     });
   }
+
+  specialClick() {
+    let text="";
+    $.ajax({
+      type: "POST",
+      url: "./pythonEx.py",
+      data: { param: text}
+    }).done(function( o ) {
+       // do something
+       console.log(o);
+    });
+  }
   render() {
     const {props, state} = this;
     return (
       <div>
         <button onClick={this.getBooks.bind(this)}>Get books</button>
-        <h2>Results</h2>      
+        <h2>Results</h2>
+        <button onClick={this.specialClick}>special click</button>    
         <div>
           {state.result.name}
         </div>

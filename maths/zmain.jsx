@@ -35,7 +35,7 @@ class Main extends React.Component {
                 {state.mathEquation}
               </div>
             </div>
-          </div>
+          </div>          
         </div>
         </div>
     );
