@@ -2,8 +2,9 @@
 <head>
 	<title>Tim Urista</title>
 	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-	<link rel="stylesheet" href="style.css">
+	<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">-->
+	<link rel="stylesheet" href="css/foundation.min.css">
+	<link rel="stylesheet" href="css/styles.css">
 
 	<script src="https://fb.me/react-15.1.0.js"></script>	
 	<script src="https://fb.me/react-dom-15.1.0.js"></script>
@@ -11,24 +12,22 @@
 </head>
 <body>
 	<nav class="navbar navbar-default">
-		<div class="container-fluid">
-			<div class="navbar-header">
-	      <a class="navbar-brand" href="https://github.com/timurista">
+		<div class="row">
+			<div class="small-9 small-centered columns">
+	      <a class="brand" href="https://github.com/timurista">
 	        Tim Urista
 	      </a>
 	</nav>
 
-	<div class="container">
-		<div class="row">
-			<div class="col-md-8 col-md-offset-2">
-				
+	<div class="row">
+		<div class="medium-8 medium-centered columns">
+			
 			<h1>Projects</h1>
 
 			<!-- Here we will include more projects -->
 			<div id='app'></div>
-		
 		</div>
 	</div>
-	<script type="text/babel" src="editor.jsx" />
+	<script type="text/babel" src="editor.jsx"  />
 </body>
 </html>
